@@ -1,6 +1,6 @@
 //Initialize the phaser engine. Create a 400x490px game.
 
-var game = new Phaser.Game(400,490, Phaser.AUTO,"gmaeDiv");
+var game = new Phaser.Game(400,490, Phaser.AUTO,"gameDiv");
 
 //Create our "main" State that will contain the game
 //this is the body of the game itself. It contains all relevant code
@@ -8,7 +8,7 @@ var game = new Phaser.Game(400,490, Phaser.AUTO,"gmaeDiv");
 var mainState = {  
   
     preload: function () {
-       //This function will execute at thebeginning of the game
+       //This function will execute at th ebeginning of the game
        //Here we'll load all of our assets (art, music, etc.)  
           
       game.stage.backgroundColor = "#71c5cf";
@@ -46,6 +46,10 @@ var mainState = {
       //Add in pipes over 1.5 seconds to the screen
       this.timer = game.time.events.loop(1500, this.addRowOfPipes, this);
       
+      this.score = 0;
+      
+      this.labelScore = game.add.text(20, 20, "0", {font: "30px Arial", fill: "#ffffff"});
+      
       //When spacebar is pressed make the bird jump
       var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
       spaceKey.onDown.add(this.jump, this);
@@ -58,7 +62,8 @@ var mainState = {
     
     if(this.bird.inWorld == false) {
       this.restartGame();   
-}      
+  }      
+game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this);
 },
 
   addOnePipe: function (x,y) {
@@ -79,18 +84,18 @@ var mainState = {
   addRowOfPipes: function () {
    var hole = Math.floor(Math.random() * 5) + 1;
    
-   
    for(var i = 0; i < 8; i++)
-   
-     if(i != hole && i != + 1) {
+     if(i != hole && i != hole + 1) {
      
        this.addOnePipe(400, i*60 + 10);
        
   }
-  
+  this.score += 1;
+  this.labelScore.text = this.score;
 },
 
   jump: function () {
+  
     //Let's add vertical velocity to the bird when th spacebar is pressed down
  
   this.bird.body.velocity.y = -350;
